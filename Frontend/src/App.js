@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./App.css";
 import Button from "./Components/Button";
 
@@ -7,10 +7,14 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState();
   const [changeBackground, setChangeBackground] = useState(null);
+  const colorName = useRef();
+  const hexColor = useRef();
 
   useEffect(() => {
     const request = async () => {
-      const response = await fetch("http://localhost:3000/data");
+      const response = await fetch(
+        "https://twitter-clone-b69f5-default-rtdb.europe-west1.firebasedatabase.app/colors.json"
+      );
 
       setIsLoading(false);
       const body = await response.json();
@@ -32,6 +36,23 @@ const App = () => {
       setHttpError(error.message);
     });
   }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newColor = {
+      color: hexColor.current.value,
+      name: colorName.current.value,
+    };
+
+    fetch(
+      "https://twitter-clone-b69f5-default-rtdb.europe-west1.firebasedatabase.app/colors.json",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newColor),
+      }
+    );
+  };
 
   if (httpError) {
     return (
@@ -63,11 +84,17 @@ const App = () => {
         {displayedColors.map((color) => (
           <Button
             bgColorFn={setChangeBackground}
+            deleteID={color.id}
             key={color.id}
             name={color.name}
             color={color.color}
           />
         ))}
+        <form onSubmit={handleSubmit}>
+          <input type='text' ref={colorName} placeholder='Color' />
+          <input type='text' ref={hexColor} placeholder='Hex value' />
+          <button>Submit color</button>
+        </form>
       </div>
     </div>
   );

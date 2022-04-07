@@ -52,6 +52,7 @@ const App = () => {
         body: JSON.stringify(newColor),
       }
     );
+    window.location.reload(true);
   };
 
   if (httpError) {
@@ -80,7 +81,12 @@ const App = () => {
       <div className='hexagon'></div>
       <div className='hexagon'></div>
       <div className='hexagon'></div>
+      <div className='hexagon'></div>
       <div className='buttons'>
+        <h3>
+          Fill the inputs and after that click on the color. Page will
+          reset after 4 sec.
+        </h3>
         {displayedColors.map((color) => (
           <Button
             bgColorFn={setChangeBackground}
